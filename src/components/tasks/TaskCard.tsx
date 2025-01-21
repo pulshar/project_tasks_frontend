@@ -1,49 +1,49 @@
-import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
-import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { TaskProject } from "@/types/index";
-import { deleteTask } from "@/api/TaskAPI";
-import { toast } from "react-toastify";
-import { useDraggable } from "@dnd-kit/core";
+import { Fragment } from 'react'
+import { Menu, Transition } from '@headlessui/react'
+import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { TaskProject } from '@/types/index'
+import { deleteTask } from '@/api/TaskAPI'
+import { toast } from 'react-toastify'
+import { useDraggable } from '@dnd-kit/core'
 
 type TaskCardProps = {
-  task: TaskProject;
-  canEdit: boolean;
-};
+  task: TaskProject
+  canEdit: boolean
+}
 
 export default function TaskCard({ task, canEdit }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task._id,
-  });
-  const navigate = useNavigate();
-  const params = useParams();
-  const projectId = params.projectId!;
+  })
+  const navigate = useNavigate()
+  const params = useParams()
+  const projectId = params.projectId!
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const { mutate } = useMutation({
     mutationFn: deleteTask,
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
     onSuccess: (data) => {
-      toast.success(data);
-      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      toast.success(data)
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] })
     },
-  });
+  })
 
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        padding: "1.25rem",
-        backgroundColor: "#FFF",
-        width: "300px",
-        display: "flex",
-        borderWidth: "1px",
-        borderColor: "rgb(203 213 225 / var(--tw-border-opacity))",
+        padding: '1.25rem',
+        backgroundColor: '#FFF',
+        width: '300px',
+        display: 'flex',
+        borderWidth: '1px',
+        borderColor: 'rgb(203 213 225 / var(--tw-border-opacity))',
       }
-    : undefined;
+    : undefined
 
   return (
     <li className="p-5 bg-white border border-slate-300 flex justify-between gap-3">
@@ -118,5 +118,5 @@ export default function TaskCard({ task, canEdit }: TaskCardProps) {
         </Menu>
       </div>
     </li>
-  );
+  )
 }

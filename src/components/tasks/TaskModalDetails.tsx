@@ -1,58 +1,53 @@
-import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import {
-  Navigate,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import { getTaskById, updateStatus } from "@/api/TaskAPI";
-import { formatDate } from "@/utils/utils";
-import { TaskStatus } from "@/types/index";
-import { statusTranslations } from "@/locales/es";
-import NotesPanel from "../notes/NotesPanel";
+import { Fragment } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'react-toastify'
+import { getTaskById, updateStatus } from '@/api/TaskAPI'
+import { formatDate } from '@/utils/utils'
+import { TaskStatus } from '@/types/index'
+import { statusTranslations } from '@/locales/es'
+import NotesPanel from '../notes/NotesPanel'
 
 export default function TaskModalDetails() {
-  const params = useParams();
-  const projectId = params.projectId!;
-  const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const taskId = queryParams.get("viewTask")!;
+  const params = useParams()
+  const projectId = params.projectId!
+  const navigate = useNavigate()
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const taskId = queryParams.get('viewTask')!
 
-  const show = taskId ? true : false;
+  const show = taskId ? true : false
 
   const { data, isError, error } = useQuery({
-    queryKey: ["task", taskId],
+    queryKey: ['task', taskId],
     queryFn: () => getTaskById({ projectId, taskId }),
     enabled: !!taskId,
     retry: false,
-  });
+  })
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const { mutate } = useMutation({
     mutationFn: updateStatus,
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
     onSuccess: (data) => {
-      toast.success(data);
-      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
-      queryClient.invalidateQueries({ queryKey: ["task", taskId] });
+      toast.success(data)
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] })
+      queryClient.invalidateQueries({ queryKey: ['task', taskId] })
     },
-  });
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const status = e.target.value as TaskStatus;
-    const data = { projectId, taskId, status };
-    mutate(data);
-  };
+    const status = e.target.value as TaskStatus
+    const data = { projectId, taskId, status }
+    mutate(data)
+  }
 
   if (isError) {
-    toast.error(error.message, { toastId: "error" });
-    return <Navigate to={`/projects/${projectId}`} />;
+    toast.error(error.message, { toastId: 'error' })
+    return <Navigate to={`/projects/${projectId}`} />
   }
 
   if (data)
@@ -89,17 +84,17 @@ export default function TaskModalDetails() {
                 >
                   <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
                     <p className="text-sm text-slate-400">
-                      Agregada el: {formatDate(data.createdAt)}{" "}
+                      Agregada el: {formatDate(data.createdAt)}{' '}
                     </p>
                     <p className="text-sm text-slate-400">
-                      Última actualización: {formatDate(data.updatedAt)}{" "}
+                      Última actualización: {formatDate(data.updatedAt)}{' '}
                     </p>
 
                     <Dialog.Title
                       as="h3"
                       className="font-black text-4xl text-slate-600 my-5"
                     >
-                      {data.name}{" "}
+                      {data.name}{' '}
                     </Dialog.Title>
 
                     <p className="text-lg text-slate-500 mb-2">
@@ -117,7 +112,7 @@ export default function TaskModalDetails() {
                             <li key={activityLog._id}>
                               <span className="font-bold text-slate-600">
                                 {statusTranslations[activityLog.status]}
-                              </span>{" "}
+                              </span>{' '}
                               por: {activityLog.user.name}
                             </li>
                           ))}
@@ -150,5 +145,5 @@ export default function TaskModalDetails() {
           </Dialog>
         </Transition>
       </>
-    );
+    )
 }

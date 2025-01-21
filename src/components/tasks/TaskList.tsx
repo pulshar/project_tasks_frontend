@@ -1,21 +1,21 @@
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { Project, TaskProject, TaskStatus } from "@/types/index";
-import TaskCard from "./TaskCard";
-import { statusTranslations } from "@/locales/es";
-import DropTask from "./DropTask";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateStatus } from "@/api/TaskAPI";
-import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { DndContext, DragEndEvent } from '@dnd-kit/core'
+import { Project, TaskProject, TaskStatus } from '@/types/index'
+import TaskCard from './TaskCard'
+import { statusTranslations } from '@/locales/es'
+import DropTask from './DropTask'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { updateStatus } from '@/api/TaskAPI'
+import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
 
 type TaskListProps = {
-  tasks: TaskProject[];
-  canEdit: boolean;
-};
+  tasks: TaskProject[]
+  canEdit: boolean
+}
 
 type GroupedTasks = {
-  [key: string]: TaskProject[];
-};
+  [key: string]: TaskProject[]
+}
 
 const initialStatusGroups: GroupedTasks = {
   pending: [],
@@ -23,63 +23,63 @@ const initialStatusGroups: GroupedTasks = {
   inProgress: [],
   underReview: [],
   completed: [],
-};
+}
 
 const statusStyles: { [key: string]: string } = {
-  pending: "border-t-slate-500",
-  onHold: "border-t-red-500",
-  inProgress: "border-t-blue-500",
-  underReview: "border-t-amber-500",
-  completed: "border-t-emerald-500",
-};
+  pending: 'border-t-slate-500',
+  onHold: 'border-t-red-500',
+  inProgress: 'border-t-blue-500',
+  underReview: 'border-t-amber-500',
+  completed: 'border-t-emerald-500',
+}
 
 export default function TaskList({ tasks, canEdit }: TaskListProps) {
-  const params = useParams();
-  const projectId = params.projectId!;
-  const queryClient = useQueryClient();
+  const params = useParams()
+  const projectId = params.projectId!
+  const queryClient = useQueryClient()
   const { mutate } = useMutation({
     mutationFn: updateStatus,
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
     onSuccess: (data) => {
-      toast.success(data);
-      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      toast.success(data)
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] })
     },
-  });
+  })
 
   const groupedTasks = tasks.reduce((acc, task) => {
-    let currentGroup = acc[task.status] ? [...acc[task.status]] : [];
-    currentGroup = [...currentGroup, task];
-    return { ...acc, [task.status]: currentGroup };
-  }, initialStatusGroups);
+    let currentGroup = acc[task.status] ? [...acc[task.status]] : []
+    currentGroup = [...currentGroup, task]
+    return { ...acc, [task.status]: currentGroup }
+  }, initialStatusGroups)
 
   const handleDragEnd = (e: DragEndEvent) => {
-    const { over, active } = e;
+    const { over, active } = e
 
     if (over && over.id) {
-      const taskId = active.id.toString();
-      const status = over.id as TaskStatus;
-      mutate({ projectId, taskId, status });
+      const taskId = active.id.toString()
+      const status = over.id as TaskStatus
+      mutate({ projectId, taskId, status })
 
-      queryClient.setQueryData(["project", projectId], (prevData: Project) => {
+      queryClient.setQueryData(['project', projectId], (prevData: Project) => {
         const updatedTasks = prevData.tasks.map((task) => {
           if (task._id === taskId) {
             return {
               ...task,
               status,
-            };
+            }
           }
-          return task;
-        });
+          return task
+        })
 
         return {
           ...prevData,
           tasks: updatedTasks,
-        };
-      });
+        }
+      })
     }
-  };
+  }
 
   return (
     <>
@@ -113,5 +113,5 @@ export default function TaskList({ tasks, canEdit }: TaskListProps) {
         </DndContext>
       </div>
     </>
-  );
+  )
 }

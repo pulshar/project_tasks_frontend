@@ -1,24 +1,24 @@
-import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Task, TaskFormData } from "@/types/index";
-import { useForm } from "react-hook-form";
-import TaskForm from "./TaskForm";
-import { updateTask } from "@/api/TaskAPI";
-import { toast } from "react-toastify";
+import { Fragment } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Task, TaskFormData } from '@/types/index'
+import { useForm } from 'react-hook-form'
+import TaskForm from './TaskForm'
+import { updateTask } from '@/api/TaskAPI'
+import { toast } from 'react-toastify'
 
 type EditTaskModalProps = {
-  data: Task;
-  taskId: Task["_id"];
-};
+  data: Task
+  taskId: Task['_id']
+}
 
 export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   /** Obtener projectId */
-  const params = useParams();
-  const projectId = params.projectId!;
+  const params = useParams()
+  const projectId = params.projectId!
 
   const {
     register,
@@ -30,28 +30,28 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
       name: data.name,
       description: data.description,
     },
-  });
+  })
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const { mutate } = useMutation({
     mutationFn: updateTask,
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
-      queryClient.invalidateQueries({ queryKey: ["task", taskId] });
-      toast.success(data);
-      reset();
-      navigate(location.pathname, { replace: true });
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] })
+      queryClient.invalidateQueries({ queryKey: ['task', taskId] })
+      toast.success(data)
+      reset()
+      navigate(location.pathname, { replace: true })
     },
-  });
+  })
 
   const handleEditTask = (formData: TaskFormData) => {
-    const data = { projectId, taskId, formData };
-    mutate(data);
-  };
+    const data = { projectId, taskId, formData }
+    mutate(data)
+  }
 
   return (
     <Transition appear show={true} as={Fragment}>
@@ -89,7 +89,7 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
                 </Dialog.Title>
 
                 <p className="text-xl font-bold">
-                  Realiza cambios a una tarea en {""}
+                  Realiza cambios a una tarea en {''}
                   <span className="text-fuchsia-600">este formulario</span>
                 </p>
 
@@ -112,5 +112,5 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
         </div>
       </Dialog>
     </Transition>
-  );
+  )
 }

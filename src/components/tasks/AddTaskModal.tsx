@@ -1,58 +1,58 @@
-import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import TaskForm from "./TaskForm";
-import { TaskFormData } from "@/types/index";
-import { createTask } from "@/api/TaskAPI";
-import { toast } from "react-toastify";
+import { Fragment } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import TaskForm from './TaskForm'
+import { TaskFormData } from '@/types/index'
+import { createTask } from '@/api/TaskAPI'
+import { toast } from 'react-toastify'
 
 export default function AddTaskModal() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   /** Leer Si modal existe */
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const modalTask = queryParams.get("newTask");
-  const show = modalTask ? true : false;
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const modalTask = queryParams.get('newTask')
+  const show = modalTask ? true : false
 
   /** Obtener projectId */
-  const params = useParams();
-  const projectId = params.projectId!;
+  const params = useParams()
+  const projectId = params.projectId!
 
   const initialValues: TaskFormData = {
-    name: "",
-    description: "",
-  };
+    name: '',
+    description: '',
+  }
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ defaultValues: initialValues });
+  } = useForm({ defaultValues: initialValues })
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const { mutate } = useMutation({
     mutationFn: createTask,
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
-      toast.success(data);
-      reset();
-      navigate(location.pathname, { replace: true });
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] })
+      toast.success(data)
+      reset()
+      navigate(location.pathname, { replace: true })
     },
-  });
+  })
 
   const handleCreateTask = (formData: TaskFormData) => {
     const data = {
       formData,
       projectId,
-    };
-    mutate(data);
-  };
+    }
+    mutate(data)
+  }
 
   return (
     <>
@@ -91,7 +91,7 @@ export default function AddTaskModal() {
                   </Dialog.Title>
 
                   <p className="text-xl font-bold">
-                    Llena el formulario y crea {""}
+                    Llena el formulario y crea {''}
                     <span className="text-fuchsia-600">una tarea</span>
                   </p>
 
@@ -115,5 +115,5 @@ export default function AddTaskModal() {
         </Dialog>
       </Transition>
     </>
-  );
+  )
 }

@@ -1,53 +1,53 @@
-import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import ErrorMessage from "../ErrorMessage";
-import { CheckPasswordForm } from "@/types/index";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { checkPassword } from "@/api/AuthAPI";
-import { toast } from "react-toastify";
-import { deleteProject } from "@/api/ProjectAPI";
+import { Fragment } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import ErrorMessage from '../ErrorMessage'
+import { CheckPasswordForm } from '@/types/index'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { checkPassword } from '@/api/AuthAPI'
+import { toast } from 'react-toastify'
+import { deleteProject } from '@/api/ProjectAPI'
 
 export default function DeleteProjectModal() {
   const initialValues: CheckPasswordForm = {
-    password: "",
-  };
-  const location = useLocation();
-  const navigate = useNavigate();
+    password: '',
+  }
+  const location = useLocation()
+  const navigate = useNavigate()
 
-  const queryParams = new URLSearchParams(location.search);
-  const deleteProjectId = queryParams.get("deleteProject")!;
-  const show = deleteProjectId ? true : false;
+  const queryParams = new URLSearchParams(location.search)
+  const deleteProjectId = queryParams.get('deleteProject')!
+  const show = deleteProjectId ? true : false
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: initialValues });
+  } = useForm({ defaultValues: initialValues })
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const checkUserPasswordMutation = useMutation({
     mutationFn: checkPassword,
     onError: (error) => toast.error(error.message),
-  });
+  })
 
   const deleteProjectMutation = useMutation({
     mutationFn: deleteProject,
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
     onSuccess: (data) => {
-      toast.success(data);
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      navigate(location.pathname, { replace: true });
+      toast.success(data)
+      queryClient.invalidateQueries({ queryKey: ['projects'] })
+      navigate(location.pathname, { replace: true })
     },
-  });
+  })
 
   const handleForm = async (formData: CheckPasswordForm) => {
-    await checkUserPasswordMutation.mutateAsync(formData);
-    await deleteProjectMutation.mutateAsync(deleteProjectId);
-  };
+    await checkUserPasswordMutation.mutateAsync(formData)
+    await deleteProjectMutation.mutateAsync(deleteProjectId)
+  }
 
   return (
     <Transition appear show={show} as={Fragment}>
@@ -81,11 +81,11 @@ export default function DeleteProjectModal() {
             >
               <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
                 <Dialog.Title as="h3" className="font-black text-4xl  my-5">
-                  Eliminar Proyecto{" "}
+                  Eliminar Proyecto{' '}
                 </Dialog.Title>
 
                 <p className="text-xl font-bold">
-                  Confirma la eliminación del proyecto {""}
+                  Confirma la eliminación del proyecto {''}
                   <span className="text-fuchsia-600">
                     colocando tu password
                   </span>
@@ -105,8 +105,8 @@ export default function DeleteProjectModal() {
                       type="password"
                       placeholder="Password Inicio de Sesión"
                       className="w-full p-3  border-gray-300 border"
-                      {...register("password", {
-                        required: "El password es obligatorio",
+                      {...register('password', {
+                        required: 'El password es obligatorio',
                       })}
                     />
                     {errors.password && (
@@ -126,5 +126,5 @@ export default function DeleteProjectModal() {
         </div>
       </Dialog>
     </Transition>
-  );
+  )
 }

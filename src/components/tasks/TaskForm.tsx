@@ -1,11 +1,11 @@
-import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { TaskFormData } from "@/types/index";
-import ErrorMessage from "../ErrorMessage";
+import { FieldErrors, UseFormRegister } from 'react-hook-form'
+import { TaskFormData } from '@/types/index'
+import ErrorMessage from '../ErrorMessage'
 
 type TaskFormProps = {
-  errors: FieldErrors<TaskFormData>;
-  register: UseFormRegister<TaskFormData>;
-};
+  errors: FieldErrors<TaskFormData>
+  register: UseFormRegister<TaskFormData>
+}
 
 export default function TaskForm({ errors, register }: TaskFormProps) {
   return (
@@ -19,8 +19,8 @@ export default function TaskForm({ errors, register }: TaskFormProps) {
           type="text"
           placeholder="Nombre de la tarea"
           className="w-full p-3  border-gray-300 border"
-          {...register("name", {
-            required: "El nombre de la tarea es obligatorio",
+          {...register('name', {
+            required: 'El nombre de la tarea es obligatorio',
           })}
         />
         {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
@@ -34,8 +34,8 @@ export default function TaskForm({ errors, register }: TaskFormProps) {
           id="description"
           placeholder="Descripción de la tarea"
           className="w-full p-3  border-gray-300 border"
-          {...register("description", {
-            required: "La descripción de la tarea es obligatoria",
+          {...register('description', {
+            required: 'La descripción de la tarea es obligatoria',
           })}
         />
         {errors.description && (
@@ -43,5 +43,5 @@ export default function TaskForm({ errors, register }: TaskFormProps) {
         )}
       </div>
     </>
-  );
+  )
 }

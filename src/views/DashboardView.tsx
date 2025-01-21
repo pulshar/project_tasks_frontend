@@ -1,22 +1,22 @@
-import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
-import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getProjects } from "@/api/ProjectAPI";
-import { useAuth } from "@/hooks/useAuth";
-import { isManager } from "@/utils/policies";
-import DeleteProjectModal from "@/components/projects/DeleteProjectModal";
+import { Fragment } from 'react'
+import { Menu, Transition } from '@headlessui/react'
+import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { getProjects } from '@/api/ProjectAPI'
+import { useAuth } from '@/hooks/useAuth'
+import { isManager } from '@/utils/policies'
+import DeleteProjectModal from '@/components/projects/DeleteProjectModal'
 
 export default function DashboardView() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { data: user, isLoading: authLoading } = useAuth();
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { data: user, isLoading: authLoading } = useAuth()
   const { data, isLoading } = useQuery({
-    queryKey: ["projects"],
+    queryKey: ['projects'],
     queryFn: getProjects,
-  });
-  if (isLoading && authLoading) return "Cargando...";
+  })
+  if (isLoading && authLoading) return 'Cargando...'
   if (data && user)
     return (
       <>
@@ -134,7 +134,7 @@ export default function DashboardView() {
           </ul>
         ) : (
           <p className="text-center py-20">
-            No hay proyectos aún {""}
+            No hay proyectos aún {''}
             <Link to="/projects/create" className=" text-fuchsia-500 font-bold">
               Crear Proyecto
             </Link>
@@ -143,5 +143,5 @@ export default function DashboardView() {
 
         <DeleteProjectModal />
       </>
-    );
+    )
 }

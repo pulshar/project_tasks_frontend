@@ -1,6 +1,4 @@
-import { useAuthenticate } from '@/hooks/useAuthenticate'
-import { UserLoginForm } from '@/types/index'
-import { cn } from '@/lib/utils'
+import { LoginForm } from '@/components/auth/LoginForm'
 import {
   Card,
   CardContent,
@@ -8,20 +6,19 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { LoginForm } from '@/components/auth/LoginForm'
+import { useAuthenticate } from '@/hooks/useAuthenticate'
+import { UserLoginForm } from '@/types/index'
+import { Link } from 'react-router-dom'
 
-export default function LoginView({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<'div'>) {
-  const { mutate: authenticate } = useAuthenticate()
+export default function LoginView() {
+  const { mutate } = useAuthenticate()
 
   const handleLogin = (formData: UserLoginForm) => {
-    authenticate(formData)
+    mutate(formData)
   }
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Iniciar sesión</CardTitle>
@@ -34,9 +31,9 @@ export default function LoginView({
           <LoginForm onSubmit={handleLogin} />
           <div className="mt-4 text-center text-sm">
             ¿No estás registrado?{' '}
-            <a href="/auth/register" className="underline underline-offset-4">
+            <Link to="/auth/register" className="underline underline-offset-4">
               Crear cuenta
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

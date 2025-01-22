@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query'
 import { authenticateUser } from '@/api/AuthAPI'
-import { toast } from 'react-toastify'
+import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 export const useAuthenticate = () => {
   const navigate = useNavigate()

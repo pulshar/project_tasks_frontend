@@ -1,24 +1,33 @@
 import ErrorMessage from '@/components/ErrorMessage'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { UserLoginForm } from '@/types/index'
+import { ForgotPasswordForm } from '@/types/index'
 import { Loader2Icon } from 'lucide-react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
 import { Button } from '../ui/button'
 
-export type LoginFormProps = {
-  onSubmit: (data: UserLoginForm) => void
+export type ResetPasswordFormProps = {
+  onSubmit: (data: ForgotPasswordForm) => void
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-  const defaultValues: UserLoginForm = { email: '', password: '' }
+export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
+  onSubmit,
+}) => {
+  const defaultValues: ForgotPasswordForm = { email: '' }
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    reset,
+    formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm({ defaultValues })
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset()
+    }
+  }, [isSubmitSuccessful, reset])
 
   return (
     <form
@@ -31,7 +40,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         <Input
           id="email"
           type="email"
-          placeholder="Email de usuario"
+          placeholder="Email de registro"
           {...register('email', {
             required: 'El email es obligatorio',
             pattern: {
@@ -42,31 +51,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         />
         {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
       </div>
-      <div className="grid gap-2">
-        <div className="flex items-center">
-          <Label htmlFor="password">Password</Label>
-          <Link
-            to="/auth/forgot-password"
-            className="ml-auto text-sm underline-offset-4 hover:underline"
-          >
-            ¿Olvidaste la contraseña?
-          </Link>
-        </div>
-        <Input
-          id="password"
-          type="password"
-          placeholder="Password"
-          {...register('password', {
-            required: 'El password es obligatorio',
-          })}
-        />
-        {errors.password && (
-          <ErrorMessage>{errors.password.message}</ErrorMessage>
-        )}
-      </div>
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting && <Loader2Icon className="animate-spin h-5 w-5" />}
-        Login
+        Enviar instrucciones
       </Button>
     </form>
   )
